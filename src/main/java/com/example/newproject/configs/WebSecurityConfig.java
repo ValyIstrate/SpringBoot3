@@ -1,6 +1,5 @@
 package com.example.newproject.configs;
 
-import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,8 +8,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -22,7 +19,6 @@ public class WebSecurityConfig {
 
     private static final AntPathRequestMatcher[] WHITE_LIST_URLS = {
             new AntPathRequestMatcher("/registration/**"),
-            // new AntPathRequestMatcher("/api/v1/getUsers"),
             new AntPathRequestMatcher("/auth/**")
     };
 

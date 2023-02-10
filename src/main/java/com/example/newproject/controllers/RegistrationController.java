@@ -28,20 +28,6 @@ public class RegistrationController {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-//    @PostMapping("/register")
-//    public ResponseEntity<AuthenticationResponse> registerUser(@RequestBody AccountModel accountModel, final HttpServletRequest request) {
-//        var user = Account.builder()
-//                .firstName(accountModel.getFirstName())
-//                .lastName(accountModel.getLastName())
-//                .email(accountModel.getEmail())
-//                .passwd(passwordEncoder.encode(accountModel.getPasswd()))
-//                .role(Role.USER)
-//                .build();
-//
-//        publisher.publishEvent(new RegistrationCompleteEvent(user, applicationUrl(request)));
-//        return ResponseEntity.ok(accountService.registerAccount(accountModel));
-//    }
-
     @PostMapping("/register")
     public String registerUser(@RequestBody AccountModel accountModel, final HttpServletRequest request) {
         Account account = accountService.registerAccount(accountModel);
