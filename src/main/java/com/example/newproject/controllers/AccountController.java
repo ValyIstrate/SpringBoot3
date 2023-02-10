@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/api/v1/getUsers")
+@RequestMapping("/api/v1/demo")
 public class AccountController {
     private final AccountService accountService;
 
@@ -17,7 +17,7 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    @GetMapping
+    @GetMapping("/getUsers")
     public List<Account> getUsers() {
         return accountService.getUsers();
     }

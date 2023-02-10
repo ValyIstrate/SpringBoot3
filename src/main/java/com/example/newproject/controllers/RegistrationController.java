@@ -6,9 +6,12 @@ import com.example.newproject.events.RegistrationCompleteEvent;
 import com.example.newproject.models.AccountModel;
 import com.example.newproject.models.PasswordModel;
 import com.example.newproject.services.AccountService;
+import com.example.newproject.services.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -16,16 +19,28 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/registration")
+@RequiredArgsConstructor
 @Slf4j
 public class RegistrationController {
 
     private final AccountService accountService;
     private final ApplicationEventPublisher publisher;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public RegistrationController(AccountService accountService, ApplicationEventPublisher publisher) {
-        this.accountService = accountService;
-        this.publisher = publisher;
-    }
+//    @PostMapping("/register")
+//    public ResponseEntity<AuthenticationResponse> registerUser(@RequestBody AccountModel accountModel, final HttpServletRequest request) {
+//        var user = Account.builder()
+//                .firstName(accountModel.getFirstName())
+//                .lastName(accountModel.getLastName())
+//                .email(accountModel.getEmail())
+//                .passwd(passwordEncoder.encode(accountModel.getPasswd()))
+//                .role(Role.USER)
+//                .build();
+//
+//        publisher.publishEvent(new RegistrationCompleteEvent(user, applicationUrl(request)));
+//        return ResponseEntity.ok(accountService.registerAccount(accountModel));
+//    }
 
     @PostMapping("/register")
     public String registerUser(@RequestBody AccountModel accountModel, final HttpServletRequest request) {
@@ -35,12 +50,14 @@ public class RegistrationController {
     }
 
     @GetMapping("/verifyRegistration")
-    public String verifyRegistration(@RequestParam("token") String token) {
+    public AuthenticationResponse verifyRegistration(@RequestParam("token") String token) {
         String result = accountService.validateVerificationToken(token);
         if(result.equalsIgnoreCase("valid")) {
-            return "User verified successfully!";
+            log.info(accountService.findUserByToken(token).toString());
+            var jwtToken = jwtService.generateToken(accountService.findUserByToken(token));
+            return AuthenticationResponse.builder().token(jwtToken).build();
         } else {
-            return "Failed to verify user!";
+            return null;
         }
     }
 

@@ -13,6 +13,8 @@ import java.util.List;
 @Table
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Account implements UserDetails {
     @Id
     @SequenceGenerator(
@@ -34,7 +36,7 @@ public class Account implements UserDetails {
     private String firstName;
     private String lastName;
     private Role role;
-    private boolean enabled = false;
+    private boolean enabled;
 
     public Account(String email, String passwd, String firstName, String lastName, Role role) {
         this.email = email;

@@ -2,11 +2,13 @@ package com.example.newproject.services;
 
 import com.example.newproject.entities.Account;
 import com.example.newproject.entities.PasswordResetToken;
+import com.example.newproject.entities.Role;
 import com.example.newproject.entities.VerificationToken;
 import com.example.newproject.models.AccountModel;
 import com.example.newproject.repositories.AccountRepository;
 import com.example.newproject.repositories.PasswordResetTokenRepository;
 import com.example.newproject.repositories.VerificationTokenRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,22 +18,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class AccountService {
 
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository verificationTokenRepository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
-
-    public AccountService(AccountRepository accountRepository,
-                          PasswordEncoder passwordEncoder,
-                          VerificationTokenRepository verificationTokenRepository,
-                          PasswordResetTokenRepository passwordResetTokenRepository) {
-        this.accountRepository = accountRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.verificationTokenRepository = verificationTokenRepository;
-        this.passwordResetTokenRepository = passwordResetTokenRepository;
-    }
 
     public List<Account> getUsers() {
         return accountRepository.findAll();
@@ -43,7 +36,7 @@ public class AccountService {
         account.setFirstName(accountModel.getFirstName());
         account.setLastName(accountModel.getLastName());
         account.setPasswd(passwordEncoder.encode(accountModel.getPasswd()));
-        account.setRole("USER");
+        account.setRole(Role.USER);
 
         accountRepository.save(account);
         return account;
@@ -81,7 +74,11 @@ public class AccountService {
     }
 
     public Account findUserByEmail(String email) {
-        return accountRepository.findByEmail(email);
+        return accountRepository.findByEmail(email).get();
+    }
+
+    public Account findUserByToken(String token) {
+        return accountRepository.findById(verificationTokenRepository.findByToken(token).getId()).get();
     }
 
     public void createPasswordResetTokenForUser(Account account, String token) {
